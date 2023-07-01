@@ -1,15 +1,35 @@
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useState, useEffect } from "react";
+
 export const ListUser = () => {
   const [data, setData] = useState([]);
+
   useEffect(() => {
-    const getData = async () => {
-      const req = await axios.get(`http://localhost:3000/users`);
-      setData(req.data);
-    };
     getData();
   }, []);
+
+  const getData = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/users");
+      setData(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    const confirmed = window.confirm("Are you sure you want to delete?");
+    if (confirmed) {
+      try {
+        await axios.delete(`http://localhost:3000/users/${id}`);
+        getData();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
   return (
     <div className="container mt-5">
       <div className="text-end">
@@ -28,20 +48,22 @@ export const ListUser = () => {
           </tr>
         </thead>
         <tbody>
-          {data.map((data, index) => (
-            <tr key={index}>
+          {data.map((user, index) => (
+            <tr key={user.id}>
               <td>{index + 1}</td>
-              <td>{data.name}</td>
-              <td>{data.email}</td>
-              <td>{data.mobile}</td>
+              <td>{user.name}</td>
+              <td>{user.email}</td>
+              <td>{user.mobile}</td>
               <td>
-                {/* Delete user button */}
-                <Link to={"/update-user/" + data.id}>
+                <Link to={`/update-user/${user.id}`}>
                   <button className="btn btn-primary me-5">Edit</button>
                 </Link>
-                <Link to={"/delete-user/" + data.id}>
-                  <button className="btn btn-danger">Delete</button>
-                </Link>
+                <button
+                  className="btn btn-danger"
+                  onClick={() => handleDelete(user.id)}
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
