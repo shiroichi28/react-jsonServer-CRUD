@@ -27,12 +27,12 @@ export const UserEdit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = {
-      name: userInput.username,
+      name: userInput.name,
       email: userInput.email,
       mobile: userInput.mobile,
     };
     try {
-      const send = await axios.put(`http://localhost:3000/users`, formData);
+      const send = await axios.put(`http://localhost:3000/users/${id}`, formData);
       if (send) {
         alert("Updated");
         setTimeout(() => {
